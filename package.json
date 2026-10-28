@@ -1,0 +1,50 @@
+{
+  "name": "youtube-transcript-dropin",
+  "version": "1.0.0",
+  "description": "Drop-in replacement for youtube-transcript that keeps working on Vercel, Lambda and other servers YouTube blocks.",
+  "keywords": [
+    "youtube",
+    "transcript",
+    "captions",
+    "subtitles",
+    "youtube-transcript",
+    "vercel",
+    "serverless"
+  ],
+  "license": "MIT",
+  "author": "Dropin Data",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dropin-data/youtube-transcript-dropin.git"
+  },
+  "homepage": "https://github.com/dropin-data/youtube-transcript-dropin#readme",
+  "bugs": "https://github.com/dropin-data/youtube-transcript-dropin/issues",
+  "type": "module",
+  "main": "./index.cjs",
+  "types": "./index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.cjs",
+    "index.d.ts",
+    "index.d.cts"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

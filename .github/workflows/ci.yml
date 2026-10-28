@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      video:
+        description: Video URL for the live check
+        required: false
+        default: https://www.youtube.com/watch?v=1UL8iZJD38U
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+
+  live:
+    # GitHub-hosted runners sit on datacenter IPs, the same kind YouTube blocks
+    # on Vercel and Lambda, so this shows both paths for real.
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/live-check.mjs "$VIDEO"
+        env:
+          VIDEO: ${{ inputs.video }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
