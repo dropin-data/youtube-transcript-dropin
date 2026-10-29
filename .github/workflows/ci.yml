@@ -42,3 +42,27 @@ jobs:
         env:
           VIDEO: ${{ inputs.video }}
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+
+  published:
+    # Installs the released package from npm, the way a user would, and fetches
+    # a transcript from this blocked runner.
+    if: github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: |
+          mkdir smoke && cd smoke && npm init -y >/dev/null
+          npm install youtube-transcript-dropin
+          node --input-type=module -e "
+            import { YoutubeTranscript } from 'youtube-transcript-dropin';
+            const rows = await YoutubeTranscript.fetchTranscript(process.env.VIDEO);
+            console.log(rows.length + ' lines, first: ' + JSON.stringify(rows[0]));
+            if (!rows.length) process.exit(1);
+          "
+          node -e "const { YoutubeTranscript } = require('youtube-transcript-dropin'); console.log(typeof YoutubeTranscript.fetchTranscript)"
+        env:
+          VIDEO: ${{ inputs.video }}
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
