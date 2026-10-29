@@ -21,6 +21,8 @@ jobs:
       - name: Check the tag matches package.json
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
       # Trusted publishing (OIDC) is set up on npmjs.com, so no token is stored.
-      # It needs npm 11.5.1 or later; Node 22 ships with npm 10.
+      # The publisher may only stage: each release waits on npmjs.com (Staged
+      # Packages) until a maintainer approves it. Needs a current npm; Node 22
+      # ships with npm 10.
       - run: npm install -g npm@latest
-      - run: npm publish --provenance --access public
+      - run: npm stage publish --provenance --access public
